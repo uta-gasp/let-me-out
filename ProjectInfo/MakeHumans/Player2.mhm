@@ -1,0 +1,34 @@
+# Written by MakeHuman 1.1.1
+version v1.1.1
+tags Player2
+camera 3.5 329.5 1.0 1.0 -0.604596165761 1.3875
+modifier nose/nose-trans-backward|forward -0.396000
+modifier macrodetails-universal/Muscle 0.302000
+modifier mouth/mouth-scale-horiz-decr|incr -0.524000
+modifier macrodetails/African 0.595000
+modifier macrodetails-proportions/BodyProportions 0.500000
+modifier macrodetails/Gender 0.000000
+modifier macrodetails-height/Height 0.262000
+modifier breast/BreastSize 0.500000
+modifier macrodetails/Age 0.548000
+modifier breast/BreastFirmness 0.500000
+modifier macrodetails/Asian 0.220051
+modifier eyebrows/eyebrows-angle-down|up -0.222000
+modifier nose/nose-scale-depth-decr|incr 0.524000
+modifier macrodetails/Caucasian 0.184949
+modifier eyebrows/eyebrows-trans-backward|forward 0.126000
+modifier eyebrows/eyebrows-trans-down|up 0.842000
+modifier nose/nose-scale-horiz-decr|incr -0.524000
+modifier macrodetails-universal/Weight 0.405000
+modifier mouth/mouth-trans-backward|forward 0.064000
+hair long01 6c6b0bb1-3608-40b8-9108-4bfd8fa71e39
+skeleton game_engine.mhskel
+eyes Low-Poly 1cc97a30-85a1-42e6-a9f7-b3e753732baa
+pose standing02.bvh
+clothes female_elegantsuit01 8bb26477-c09f-4439-b05f-961516acf662
+clothes shoes03 ad622a26-da1e-4e3c-9f8e-454edf10d504
+clothesHideFaces True
+skinMaterial skins/young_african_female/young_african_female.mhmat
+material long01 6c6b0bb1-3608-40b8-9108-4bfd8fa71e39 long01.mhmat
+material Low-Poly 1cc97a30-85a1-42e6-a9f7-b3e753732baa eyes/materials/brown.mhmat
+subdivide False

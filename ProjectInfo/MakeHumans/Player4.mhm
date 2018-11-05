@@ -1,0 +1,38 @@
+# Written by MakeHuman 1.1.1
+version v1.1.1
+tags Player4
+camera 6.5 345.5 0.28497541285 1.0 -0.233550309527 1.225
+modifier eyes/l-eye-bag-in|out 0.112000
+modifier nose/nose-trans-backward|forward 0.238000
+modifier macrodetails-universal/Muscle 1.000000
+modifier macrodetails/African 0.778000
+modifier macrodetails-proportions/BodyProportions 0.230000
+modifier nose/nose-trans-down|up 0.158000
+modifier eyes/r-eye-bag-decr|incr 0.174000
+modifier macrodetails/Gender 1.000000
+modifier macrodetails-height/Height 0.516000
+modifier breast/BreastSize 0.500000
+modifier eyes/l-eye-bag-decr|incr 0.174000
+modifier macrodetails/Age 0.437000
+modifier eyes/l-eye-bag-height-decr|incr 0.476000
+modifier breast/BreastFirmness 0.500000
+modifier macrodetails/Asian 0.111000
+modifier nose/nose-scale-depth-decr|incr 0.730000
+modifier macrodetails/Caucasian 0.111000
+modifier eyes/r-eye-bag-in|out 0.112000
+modifier eyes/r-eye-bag-height-decr|incr 0.476000
+modifier nose/nose-scale-vert-decr|incr 0.350000
+modifier nose/nose-scale-horiz-decr|incr -0.556000
+modifier macrodetails-universal/Weight 0.500000
+hair short04 e09bfd91-f83f-4f9a-ba8c-4635cd1ae0d8
+skeleton game_engine.mhskel
+eyebrows eyebrow012 1c16325c-7831-4166-831a-05c5b609c219
+eyes Low-Poly 1cc97a30-85a1-42e6-a9f7-b3e753732baa
+pose standing02.bvh
+clothes shoes01 6e0c552e-e207-44df-8f70-c9bfdeddd8c6
+clothes male_casualsuit03 39864dca-8d5c-4d7c-84ce-c00982e93cb7
+clothesHideFaces True
+skinMaterial skins/young_african_male/young_african_male.mhmat
+material short04 e09bfd91-f83f-4f9a-ba8c-4635cd1ae0d8 short04.mhmat
+material Low-Poly 1cc97a30-85a1-42e6-a9f7-b3e753732baa eyes/materials/brown.mhmat
+subdivide False

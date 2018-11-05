@@ -1,0 +1,192 @@
+fileFormatVersion: 2
+guid: b5ce98f0faa206e4babbafb599ef0826
+timeCreated: 1523606057
+licenseType: Free
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: door
+    100002: door frame
+    100004: doorhandle
+    100006: doorhandle.001
+    100008: lock
+    100010: //RootNode
+    400000: door
+    400002: door frame
+    400004: doorhandle
+    400006: doorhandle.001
+    400008: lock
+    400010: //RootNode
+    2100000: doorframe
+    2100002: door
+    2100004: metal
+    2100006: keyhole
+    2300000: door
+    2300002: door frame
+    2300004: doorhandle
+    2300006: doorhandle.001
+    2300008: lock
+    3300000: door
+    3300002: door frame
+    3300004: doorhandle
+    3300006: doorhandle.001
+    3300008: lock
+    4300000: door frame
+    4300002: door
+    4300004: lock
+    4300006: doorhandle
+    4300008: doorhandle.001
+    7400000: door frame|door frameAction
+    7400002: door frame|doorhandle.001Action
+    7400004: door frame|doorhandle.002Action
+    7400006: door frame|doorhandle.003Action
+    7400008: door frame|doorhandleAction
+    7400010: door frame|doorOpen
+    7400012: door frame|lock.001Action
+    7400014: door frame|lockAction
+    7400016: door frame|Open
+    7400018: door|door frameAction
+    7400020: door|doorhandle.001Action
+    7400022: door|doorhandle.002Action
+    7400024: door|doorhandle.003Action
+    7400026: door|doorhandleAction
+    7400028: door|doorOpen
+    7400030: door|lock.001Action
+    7400032: door|lockAction
+    7400034: Open
+    7400036: lock|door frameAction
+    7400038: lock|doorhandle.001Action
+    7400040: lock|doorhandle.002Action
+    7400042: lock|doorhandle.003Action
+    7400044: lock|doorhandleAction
+    7400046: lock|doorOpen
+    7400048: lock|lock.001Action
+    7400050: lock|lockAction
+    7400052: lock|Open
+    7400054: doorhandle|door frameAction
+    7400056: doorhandle|doorhandle.001Action
+    7400058: doorhandle|doorhandle.002Action
+    7400060: doorhandle|doorhandle.003Action
+    7400062: doorhandle|doorhandleAction
+    7400064: doorhandle|doorOpen
+    7400066: doorhandle|lock.001Action
+    7400068: doorhandle|lockAction
+    7400070: doorhandle|Open
+    7400072: doorhandle.001|door frameAction
+    7400074: doorhandle.001|doorhandle.001Action
+    7400076: doorhandle.001|doorhandle.002Action
+    7400078: doorhandle.001|doorhandle.003Action
+    7400080: doorhandle.001|doorhandleAction
+    7400082: doorhandle.001|doorOpen
+    7400084: doorhandle.001|lock.001Action
+    7400086: doorhandle.001|lockAction
+    7400088: doorhandle.001|Open
+    9500000: //RootNode
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Open
+      takeName: door|Open
+      firstFrame: 0
+      lastFrame: 15
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
