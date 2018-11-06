@@ -58,6 +58,7 @@ public class GameFlow : NetworkBehaviour
         }
 
         foreach (Light light in (FindObjectsOfType<Light>() as Light[]).Where(light => light.name.StartsWith("win ")))
+        //foreach (Light light in winLights)
         {
             light.enabled = false;
         }
@@ -238,7 +239,8 @@ public class GameFlow : NetworkBehaviour
 
         foreach (Light light in winLights)
         {
-            light.gameObject.SetActive(true);
+            //light.gameObject.SetActive(true);
+            light.enabled = true;
         }
     }
 

@@ -146,7 +146,7 @@ public class Calibration : MonoBehaviour
                 {
                     ShowBoard = false;
                 }
-
+                
                 onCalibrated(this, _isCalibratedSuccessfully);
                 onCalibrationStatusChanged(this, false);
             });

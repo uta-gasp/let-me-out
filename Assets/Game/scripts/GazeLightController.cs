@@ -10,11 +10,17 @@ public class GazeLightController : NetworkBehaviour
     VREyeTracker _eyeTracker;   // singleton
     Camera _camera;
     Light _spotlight;           // child-internal
+    Calibration _calibration;
 
     bool _headGaze;
     int _id;
 
     // overrides
+
+    void Awake()
+    {
+        _calibration = FindObjectOfType<Calibration>();
+    }
 
     void Start()
     {
@@ -31,6 +37,10 @@ public class GazeLightController : NetworkBehaviour
         _camera = Camera.main;
 
         _headGaze = FindObjectOfType<Setup>().mode == Setup.Mode.HeadGaze;
+        if (!_headGaze)
+        {
+            _calibration.onCalibrationStatusChanged += onCalibrationStatusChanged;
+        }
     }
 
     void Update()
@@ -53,29 +63,12 @@ public class GazeLightController : NetworkBehaviour
         CmdReportAngle(_spotlight.transform.localRotation, _id);
     }
 
-    void OnEnable()
-    {
-        if (!_headGaze)
-        {
-            FindObjectOfType<Calibration>().onCalibrationStatusChanged += onCalibrationStatusChanged;
-        }
-
-    }
-
-    void OnDisable()
-    {
-        if (!_headGaze)
-        {
-            FindObjectOfType<Calibration>().onCalibrationStatusChanged -= onCalibrationStatusChanged;
-        }
-
-    }
-
     // internal methods
 
 
     private void onCalibrationStatusChanged(object sender, bool e)
     {
+        Debug.Log($"is calibrating - {e}");
         gameObject.SetActive(!e);
     }
 
