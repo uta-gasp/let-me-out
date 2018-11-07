@@ -28,7 +28,7 @@ public class GameFlow : NetworkBehaviour
     Sounds _sounds = null;          // internal
     Logger.LogDomain _logGeneral;
     Logger.LogDomain _logErrors;
-    NetworkManager _metworkManager;
+    NetworkManager _networkManager;
 
     bool _isFinished = false;
 
@@ -76,7 +76,7 @@ public class GameFlow : NetworkBehaviour
             UnityEngine.XR.InputTracking.disablePositionalTracking = true;
         }
 
-        _metworkManager = FindObjectOfType<NetworkManager>();
+        _networkManager = FindObjectOfType<NetworkManager>();
 
         /*
         else
@@ -112,12 +112,13 @@ public class GameFlow : NetworkBehaviour
 
     private void StartClient(object sender, System.EventArgs e)
     {
-        _metworkManager.StartClient();
+        _networkManager.networkAddress = setup.settings["ip"];
+        _networkManager.StartClient();
     }
 
     private void StartServer(object sender, System.EventArgs e)
     {
-        _metworkManager.StartServer();
+        _networkManager.StartServer();
     }
 
     void Update()
