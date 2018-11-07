@@ -36,7 +36,7 @@ public class GazeLightController : NetworkBehaviour
         _eyeTracker = VREyeTracker.Instance;
         _camera = Camera.main;
 
-        _headGaze = FindObjectOfType<Setup>().mode == Setup.Mode.HeadGaze;
+        _headGaze = FindObjectOfType<GameFlow>().setup.mode == Setup.Mode.HeadGaze;
         if (!_headGaze)
         {
             _calibration.onCalibrationStatusChanged += onCalibrationStatusChanged;

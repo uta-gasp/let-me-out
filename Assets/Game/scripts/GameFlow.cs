@@ -12,6 +12,9 @@ public class GameFlow : NetworkBehaviour
     public KeyStatus KeyStatus;
     public Message message;
     public Light[] winLights;
+    public Setup setup;
+
+    public GameObject[] vrObjects;
 
     // readonly
 
@@ -25,6 +28,7 @@ public class GameFlow : NetworkBehaviour
     Sounds _sounds = null;          // internal
     Logger.LogDomain _logGeneral;
     Logger.LogDomain _logErrors;
+    NetworkManager _metworkManager;
 
     bool _isFinished = false;
 
@@ -33,11 +37,30 @@ public class GameFlow : NetworkBehaviour
     public override void OnStartClient()
     {
         _sounds = GetComponent<Sounds>();
+
+        foreach (var obj in vrObjects)
+        {
+            obj.SetActive(true);
+        }
+
+        var networkHUD = FindObjectOfType<NetworkManagerHUD>();
+        setup.settings["IP"] = networkHUD.manager.networkAddress;
+        
+        base.OnStartClient();
+    }
+
+    public override void OnStartServer()
+    {
+        setup.gameObject.SetActive(false);
+        Application.logMessageReceived += HandleLog;
+
+        base.OnStartServer();
     }
 
     void Awake()
     {
         _debug = FindObjectOfType<DebugDesk>();
+
         Logger logger = FindObjectOfType<Logger>();
         if (logger)
         {
@@ -45,17 +68,22 @@ public class GameFlow : NetworkBehaviour
             _logErrors = logger.register("error");
         }
 
-        // Application.logMessageReceived += HandleLog;
+        setup.startServer += StartServer;
+        setup.startClient += StartClient;
 
         if (OpenVR.IsHmdPresent())
         {
             UnityEngine.XR.InputTracking.disablePositionalTracking = true;
         }
+
+        _metworkManager = FindObjectOfType<NetworkManager>();
+
+        /*
         else
         {
             FindObjectOfType<SteamVR_PlayArea>()?.gameObject.SetActive(false);
             FindObjectOfType<SteamVR_Render>()?.gameObject.SetActive(false);
-        }
+        }*/
 
         foreach (Light light in (FindObjectsOfType<Light>() as Light[]).Where(light => light.name.StartsWith("win ")))
         //foreach (Light light in winLights)
@@ -80,6 +108,16 @@ public class GameFlow : NetworkBehaviour
             _debug.print("server started");
         }
         */
+    }
+
+    private void StartClient(object sender, System.EventArgs e)
+    {
+        _metworkManager.StartClient();
+    }
+
+    private void StartServer(object sender, System.EventArgs e)
+    {
+        _metworkManager.StartServer();
     }
 
     void Update()
@@ -204,7 +242,7 @@ public class GameFlow : NetworkBehaviour
         {
             if (_logErrors != null)
                 _logErrors.add(logString);
-            Debug.Log($"ERROR: {logString} [{stackTrace}]");
+            _debug.print($"ERROR: {logString} [{stackTrace}]");
         }
     }
 

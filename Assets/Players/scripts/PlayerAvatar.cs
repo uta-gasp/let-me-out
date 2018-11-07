@@ -135,25 +135,26 @@ public class PlayerAvatar : NetworkBehaviour
             _viveControllerRight.pinchToggled += onVivePinchToggled;
         }
 
-        if (FindObjectOfType<Setup>().mode == Setup.Mode.HeadGaze)
+        Setup setup = FindObjectOfType<GameFlow>().setup;
+        if (setup.mode == Setup.Mode.HeadGaze)
         {
             FindObjectOfType<Calibration>().hide();
         }
+        setup.hide();
 
         FindObjectOfType<NetworkManagerHUD>().showGUI = false;
-        FindObjectOfType<Setup>().hide();
     }
 
     void Update()
     {
+        if (!isLocalPlayer)
+            return;
+
         _camera.position = transform.position;
         transform.rotation = _camera.rotation;
 
         Vector3 fwd = new Vector3(_camera.forward.x, 0, _camera.forward.z);
         transform.forward = fwd.normalized;
-
-        if (!isLocalPlayer)
-            return;
 
         if (!_isWalking && _fpc.isWalking)
         {
