@@ -46,7 +46,7 @@ public class Setup : MonoBehaviour
                 }
             }
         }
-        catch (Exception e) { }
+        catch (Exception) { }
 
         modeControl.value = GetSettingValue("mode", (int)Mode.Gaze);
         ipControl.text = GetSettingValue("ip", "169.254.31.15");

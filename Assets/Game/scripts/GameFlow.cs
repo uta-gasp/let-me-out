@@ -85,8 +85,7 @@ public class GameFlow : NetworkBehaviour
             FindObjectOfType<SteamVR_Render>()?.gameObject.SetActive(false);
         }*/
 
-        foreach (Light light in (FindObjectsOfType<Light>() as Light[]).Where(light => light.name.StartsWith("win ")))
-        //foreach (Light light in winLights)
+        foreach (Light light in winLights)
         {
             light.enabled = false;
         }
@@ -278,8 +277,8 @@ public class GameFlow : NetworkBehaviour
 
         foreach (Light light in winLights)
         {
-            //light.gameObject.SetActive(true);
-            light.enabled = true;
+            light.gameObject.SetActive(true);
+            // light.enabled = true;
         }
     }
 

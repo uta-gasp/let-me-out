@@ -23,9 +23,9 @@ public class PlayerAvatar : NetworkBehaviour
 
     DebugDesk _debug;                   // external
     GameObject _avatar;                 // instantiated
-    Animator _animator;                 // _avatar internal
+    // Animator _animator;                 // _avatar internal
     Light _light;                       // child-internal
-    CharacterController _character;     // internal
+    // CharacterController _character;     // internal
     FirstPersonController _fpc;         // internal
     HealthStatus _healthStatus;         // external
     Message _message;                   // external
@@ -42,9 +42,6 @@ public class PlayerAvatar : NetworkBehaviour
 
     [SyncVar(hook = "onChangeHealth")]
     float _health = 1f;
-
-    float _fallSpeed = 1f;
-    Vector3 _fallAxe = new Vector3(0, 0, 1);
 
     // public methods
 
@@ -73,13 +70,6 @@ public class PlayerAvatar : NetworkBehaviour
         _message.show("Respawning...", 2.0f, 0.5f);
     }
 
-    /*
-    [ClientRpc]
-    public void RpcDisable()
-    {
-        _fpc.enabled = false;
-    }*/
-
     public static PlayerAvatar getLocalPlayer()
     {
         var players = FindObjectsOfType<PlayerAvatar>();
@@ -93,7 +83,7 @@ public class PlayerAvatar : NetworkBehaviour
         _debug = FindObjectOfType<DebugDesk>();
 
         _light = GetComponentInChildren<Light>();
-        _character = GetComponent<CharacterController>();
+        // _character = GetComponent<CharacterController>();
         _fpc = GetComponent<FirstPersonController>();
         _healthStatus = FindObjectOfType<HealthStatus>();
         _message = FindObjectOfType<StatusUI>().message;
@@ -187,7 +177,7 @@ public class PlayerAvatar : NetworkBehaviour
         _avatar.transform.localPosition = new Vector3(0, offset, -0.3f);
         _avatar.transform.localRotation = new Quaternion(0, 0, 0, 0);
 
-        _animator = _avatar.GetComponent<Animator>();
+        // _animator = _avatar.GetComponent<Animator>();
     }
 
     void Die()
@@ -197,24 +187,7 @@ public class PlayerAvatar : NetworkBehaviour
 
         _fpc.enabled = false;
         _light.enabled = false;
-
-        //Invoke("FallDown", Time.deltaTime);
     }
-
-    /*
-    void FallDown()
-    {
-        if (_character == null)
-            return;
-
-        if (_character.transform.eulerAngles.z < 90 || _character.transform.eulerAngles.z > 270)
-        {
-            _character.transform.Rotate(_fallAxe, _fallSpeed);
-            _fallSpeed *= 1.05f;
-
-            Invoke("FallDown", Time.deltaTime);
-        }
-    }*/
 
     void RespawnAtOrigin()
     {

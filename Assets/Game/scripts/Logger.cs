@@ -15,9 +15,6 @@ public class Logger : MonoBehaviour
 
         private string _header;
 
-        private StreamWriter _stream = null;
-        private List<string> buffer = new List<string>();
-
         internal LogDomain(string aHeader, bool aEnabled)
         {
             _header = aHeader;
@@ -34,7 +31,6 @@ public class Logger : MonoBehaviour
     }
 
     private StreamWriter _stream = null;
-    private uint _startTime;
     private LogDomain _general;
 
     private List<string> _buffer = new List<string>();
@@ -76,8 +72,6 @@ public class Logger : MonoBehaviour
 
     void Start()
     {
-        _startTime = 0;
-
         var rnd = new System.Random();
         filename = $"log_{rnd.Next()}.txt";
 

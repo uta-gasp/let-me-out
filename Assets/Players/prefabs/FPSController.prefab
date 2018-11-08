@@ -198,13 +198,13 @@ Light:
   m_Cookie: {fileID: 0}
   m_DrawHalo: 0
   m_Flare: {fileID: 0}
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
   m_Lightmapping: 4
   m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 1
+  m_BounceIntensity: 0.15
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
@@ -263,7 +263,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 807e5ca346390774495ad6ca48a7cdbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  headGaze: 0
 --- !u!114 &114285793491426108
 MonoBehaviour:
   m_ObjectHideFlags: 1
