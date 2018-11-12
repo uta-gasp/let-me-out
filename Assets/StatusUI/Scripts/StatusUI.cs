@@ -1,17 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StatusUI : MonoBehaviour
 {
-    public Message message { get { return _message; } }
+    public Message message;
+    public Text notification;
 
-    Message _message;
+    public void notify(string aNotification)
+    {
+        notification.text = aNotification;
+    }
+
+    public void clearNotification()
+    {
+        notification.text = "";
+    }
 
     void Start()
     {
-        _message = GetComponentInChildren<Message>();
-
         transform.gameObject.SetActive(false);
         Invoke("Stick", 1);
     }
@@ -20,7 +28,7 @@ public class StatusUI : MonoBehaviour
     {
         transform.parent = Camera.main.transform;
         transform.localRotation = Quaternion.Euler(0, 90, 0);
-        transform.localPosition = new Vector3(0f, 0.108f, 0.2f);
+        transform.localPosition = new Vector3(0f, 0.1f, 0.2f);
         transform.gameObject.SetActive(true);
     }
 }

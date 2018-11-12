@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
 public class Setup : MonoBehaviour
 {
@@ -25,6 +26,8 @@ public class Setup : MonoBehaviour
 
     // internal members
 
+    NetworkManager _networkManager;
+
     Dictionary<string, string> _settings = new Dictionary<string, string>();
 
     const string FILENAME = "settings.txt";
@@ -33,6 +36,8 @@ public class Setup : MonoBehaviour
 
     void Awake()
     {
+        _networkManager = FindObjectOfType<NetworkManager>();
+
         try
         {
             System.IO.StreamReader stream = new System.IO.StreamReader(FILENAME);
@@ -62,12 +67,15 @@ public class Setup : MonoBehaviour
     public void OnStartServerRequest()
     {
         SaveSettings();
+        _networkManager.StartServer();
         startServer(this, new EventArgs());
     }
 
     public void OnStartClientRequest()
     {
         SaveSettings();
+        _networkManager.networkAddress = _settings["ip"];
+        _networkManager.StartClient();
         startClient(this, new EventArgs());
     }
 

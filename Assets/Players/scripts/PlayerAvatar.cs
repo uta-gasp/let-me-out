@@ -25,10 +25,10 @@ public class PlayerAvatar : NetworkBehaviour
     GameObject _avatar;                 // instantiated
     // Animator _animator;                 // _avatar internal
     Light _light;                       // child-internal
-    // CharacterController _character;     // internal
+
     FirstPersonController _fpc;         // internal
     HealthStatus _healthStatus;         // external
-    Message _message;                   // external
+    StatusUI _statusUI;                  // external
 
     Logger.LogDomain _log;
     Transform _camera;
@@ -40,7 +40,7 @@ public class PlayerAvatar : NetworkBehaviour
     string _name;
     bool _isWalking = false;
 
-    [SyncVar(hook = "onChangeHealth")]
+    [SyncVar(hook = "OnChangeHealth")]
     float _health = 1f;
 
     // public methods
@@ -55,19 +55,9 @@ public class PlayerAvatar : NetworkBehaviour
     // server-side
     public void respawn()
     {
-        Invoke("RespawnAtOrigin", 1.5f);
-        Invoke("EnableAfterRespawn", 3);
+        Invoke("RestoreProps", 1.5f);
 
         RpcRespawn();
-    }
-
-    [ClientRpc]
-    public void RpcRespawn()
-    {
-        if (!isLocalPlayer)
-            return;
-
-        _message.show("Respawning...", 2.0f, 0.5f);
     }
 
     public static PlayerAvatar getLocalPlayer()
@@ -83,10 +73,9 @@ public class PlayerAvatar : NetworkBehaviour
         _debug = FindObjectOfType<DebugDesk>();
 
         _light = GetComponentInChildren<Light>();
-        // _character = GetComponent<CharacterController>();
         _fpc = GetComponent<FirstPersonController>();
         _healthStatus = FindObjectOfType<HealthStatus>();
-        _message = FindObjectOfType<StatusUI>().message;
+        _statusUI = FindObjectOfType<StatusUI>();
 
         int index;
         lock (_mutex)
@@ -113,16 +102,16 @@ public class PlayerAvatar : NetworkBehaviour
 
         if (_viveControllerLeft)
         {
-            _viveControllerLeft.trackpadTouched += onViveTrackpadTouched;
-            _viveControllerLeft.IsTouchingTrackpad += onViveTouchingTrackpad;
-            _viveControllerLeft.pinchToggled += onVivePinchToggled;
+            _viveControllerLeft.trackpadTouched += OnViveTrackpadTouched;
+            _viveControllerLeft.IsTouchingTrackpad += OnViveTouchingTrackpad;
+            _viveControllerLeft.pinchToggled += OnVivePinchToggled;
         }
 
         if (_viveControllerRight)
         {
-            _viveControllerRight.trackpadTouched += onViveTrackpadTouched;
-            _viveControllerRight.IsTouchingTrackpad += onViveTouchingTrackpad;
-            _viveControllerRight.pinchToggled += onVivePinchToggled;
+            _viveControllerRight.trackpadTouched += OnViveTrackpadTouched;
+            _viveControllerRight.IsTouchingTrackpad += OnViveTouchingTrackpad;
+            _viveControllerRight.pinchToggled += OnVivePinchToggled;
         }
 
         Setup setup = FindObjectOfType<GameFlow>().setup;
@@ -180,8 +169,12 @@ public class PlayerAvatar : NetworkBehaviour
         // _animator = _avatar.GetComponent<Animator>();
     }
 
+    // client-side
     void Die()
     {
+        if (!isLocalPlayer)
+            return;
+
         if (_log != null)
             _log.add("dead");
 
@@ -189,6 +182,24 @@ public class PlayerAvatar : NetworkBehaviour
         _light.enabled = false;
     }
 
+    [ClientRpc]
+    void RpcRespawn()
+    {
+        if (isLocalPlayer)
+        {
+            _statusUI.message.show("Respawning...", 2.0f, 0.5f);
+
+            Invoke("RespawnAtOrigin", 1.5f);
+            Invoke("EnableAfterRespawn", 3);
+        }
+        else
+        {
+            _statusUI.notify("Respawning the partner...");
+            Invoke("ClearNotification", 3);
+        }
+    }
+
+    // server-side
     void RespawnAtOrigin()
     {
         NetworkStartPosition[] spawnPoints = FindObjectsOfType<NetworkStartPosition>().ToArray();
@@ -198,40 +209,28 @@ public class PlayerAvatar : NetworkBehaviour
         transform.position = spawnPoint.transform.position;
     }
 
+    // client-side
     void EnableAfterRespawn()
     {
         _fpc.enabled = true;
         _light.enabled = true;
+    }
+
+    // client-side
+    void ClearNotification()
+    {
+        _statusUI.clearNotification();
+    }
+
+    // server-side
+    void RestoreProps()
+    {
         _health = 1f;
     }
 
-    private void onViveTrackpadTouched(object sender, bool e)
-    {
-        if (!e)
-        {
-            _fpc.viveControllerVertAxe = 0f;
-            _fpc.viveControllerHorzAxe = 0f;
-        }
-    }
+    // callbacks
 
-    private void onViveTouchingTrackpad(object sender, bool e)
-    {
-        if (e)
-        {
-            _fpc.viveControllerVertAxe = _viveControllerRight.touchPos.y;
-            _fpc.viveControllerHorzAxe = _viveControllerRight.touchPos.x;
-        }
-    }
-
-    private void onVivePinchToggled(object sender, bool e)
-    {
-        if (e)
-        {
-            _fpc.Jump();
-        }
-    }
-
-    void onChangeHealth(float aValue)
+    void OnChangeHealth(float aValue)
     {
         if (aValue == 0f)
         {
@@ -241,6 +240,32 @@ public class PlayerAvatar : NetworkBehaviour
         if (isLocalPlayer)
         {
             _healthStatus.value = aValue;
+        }
+    }
+
+    void OnViveTrackpadTouched(object sender, bool e)
+    {
+        if (!e)
+        {
+            _fpc.viveControllerVertAxe = 0f;
+            _fpc.viveControllerHorzAxe = 0f;
+        }
+    }
+
+    void OnViveTouchingTrackpad(object sender, bool e)
+    {
+        if (e)
+        {
+            _fpc.viveControllerVertAxe = _viveControllerRight.touchPos.y;
+            _fpc.viveControllerHorzAxe = _viveControllerRight.touchPos.x;
+        }
+    }
+
+    void OnVivePinchToggled(object sender, bool e)
+    {
+        if (e)
+        {
+            _fpc.Jump();
         }
     }
 }

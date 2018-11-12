@@ -28,7 +28,6 @@ public class GameFlow : NetworkBehaviour
     Sounds _sounds = null;          // internal
     Logger.LogDomain _logGeneral;
     Logger.LogDomain _logErrors;
-    NetworkManager _networkManager;
 
     bool _isFinished = false;
 
@@ -43,8 +42,8 @@ public class GameFlow : NetworkBehaviour
             obj.SetActive(true);
         }
 
-        var networkHUD = FindObjectOfType<NetworkManagerHUD>();
-        setup.settings["IP"] = networkHUD.manager.networkAddress;
+        //var networkHUD = FindObjectOfType<NetworkManagerHUD>();
+        //setup.settings["IP"] = networkHUD.manager.networkAddress;
         
         base.OnStartClient();
     }
@@ -68,56 +67,15 @@ public class GameFlow : NetworkBehaviour
             _logErrors = logger.register("error");
         }
 
-        setup.startServer += StartServer;
-        setup.startClient += StartClient;
-
         if (OpenVR.IsHmdPresent())
         {
             UnityEngine.XR.InputTracking.disablePositionalTracking = true;
         }
 
-        _networkManager = FindObjectOfType<NetworkManager>();
-
-        /*
-        else
-        {
-            FindObjectOfType<SteamVR_PlayArea>()?.gameObject.SetActive(false);
-            FindObjectOfType<SteamVR_Render>()?.gameObject.SetActive(false);
-        }*/
-
         foreach (Light light in winLights)
         {
             light.enabled = false;
         }
-
-        /*
-        // networking
-        NetworkManager networkManager = FindObjectOfType<NetworkManager>();
-
-        if (OpenVR.IsHmdPresent())
-        {
-            networkManager.StartClient();
-            FindObjectOfType<NetworkManagerHUD>().showGUI = false;
-            _debug.print("client started");
-        }
-        else if (System.Environment.GetCommandLineArgs().Any(arg => (new string[] { "-s", "--server" }).Any(srv => srv == arg) ))
-        {
-            networkManager.StartServer();
-            FindObjectOfType<NetworkManagerHUD>().showGUI = false;
-            _debug.print("server started");
-        }
-        */
-    }
-
-    private void StartClient(object sender, System.EventArgs e)
-    {
-        _networkManager.networkAddress = setup.settings["ip"];
-        _networkManager.StartClient();
-    }
-
-    private void StartServer(object sender, System.EventArgs e)
-    {
-        _networkManager.StartServer();
     }
 
     void Update()
@@ -136,26 +94,27 @@ public class GameFlow : NetworkBehaviour
         if (players.Length == 0)
             return;
 
-        bool isAnyoneIsStillInside = false;
+        bool isSomeoneIsStillInside = false;
         foreach (Transform player in players)
         {
             Vector2 playerPositionOnTheFloor = new Vector2(player.position.x, player.position.z);
             if (!winArea.Contains(playerPositionOnTheFloor))
             {
-                isAnyoneIsStillInside = true;
+                isSomeoneIsStillInside = true;
                 break;
             }
         }
 
-        if (!isAnyoneIsStillInside)
+        if (!isSomeoneIsStillInside)
         {
             _isFinished = true;
-            Win();
+            End();
         }
     }
 
     // public methods
 
+    // server-side
     public void CaptureKey(Key aKey)
     {
         string keyName = aKey.name;
@@ -191,6 +150,22 @@ public class GameFlow : NetworkBehaviour
 
     // internal methods
 
+    // server-side
+    void End()
+    {
+        if (!isServer)
+            return;
+
+        RpcLightsOn();
+        RpcEndGame();
+    }
+
+    // client-side
+    void ShowCompleteMessage()
+    {
+        message.show("Completed!");
+    }
+
     void OpenDoor(GameObject aDoor)
     {
         aDoor.GetComponent<BoxCollider>().enabled = false;
@@ -200,35 +175,6 @@ public class GameFlow : NetworkBehaviour
     void UpdateKeyStatus(string aName)
     {
         KeyStatus.collect(aName);
-    }
-
-    /*
-    void Lost()
-    {
-        if (!isServer)
-            return;
-
-        // disable players
-        PlayerAvatar[] players = FindObjectsOfType<PlayerAvatar>().Where(player => player.isAlive).ToArray();
-        foreach (var player in players)
-        {
-            player.RpcDisable();
-        }
-
-        message.show("Game over...");
-
-        RpcEndGame("Lost");
-    }*/
-
-    void Win()
-    {
-        if (!isServer)
-            return;
-
-        message.show("Completed!");
-
-        RpcLightsOn();
-        RpcEndGame("Win");
     }
 
     void Exit()
@@ -278,17 +224,17 @@ public class GameFlow : NetworkBehaviour
         foreach (Light light in winLights)
         {
             light.gameObject.SetActive(true);
-            // light.enabled = true;
+            light.enabled = true;
         }
     }
 
     [ClientRpc]
-    void RpcEndGame(string aResult)
+    void RpcEndGame()
     {
         if (_logGeneral != null)
-            _logGeneral.add($"finished\t{aResult}");
+            _logGeneral.add($"finished");
 
-        Invoke($"Show{aResult}Message", 2);
+        Invoke("ShowCompleteMessage", 2);
         Invoke("Exit", 4);
     }
 }
