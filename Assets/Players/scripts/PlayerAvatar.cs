@@ -48,6 +48,8 @@ public class PlayerAvatar : NetworkBehaviour
     // server-side
     public float decreaseHealth(float aAmount)
     {
+        _statusUI.flash();
+
         _health = Mathf.Max(0f, _health - aAmount);
         return _health;
     }
@@ -55,9 +57,21 @@ public class PlayerAvatar : NetworkBehaviour
     // server-side
     public void respawn()
     {
+        if (_log != null)
+            _log.add("respawned");
+
         Invoke("RestoreProps", 1.5f);
 
         RpcRespawn();
+    }
+
+    public void hitsDoor(string aName)
+    {
+        if (!isServer)
+            return;
+
+        if (_log != null)
+            _log.add($"hits-door\t{aName}");
     }
 
     public static PlayerAvatar getLocalPlayer()

@@ -34,9 +34,26 @@ GameObject:
   - component: {fileID: 82529458130599980}
   - component: {fileID: 114183978589221080}
   - component: {fileID: 114872026402816788}
-  - component: {fileID: 54668647197069216}
   m_Layer: 0
   m_Name: chair morph
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1599428780386904
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4669855947575888}
+  - component: {fileID: 33387049057322202}
+  - component: {fileID: 136320626557389474}
+  - component: {fileID: 23456590977420286}
+  m_Layer: 0
+  m_Name: health-bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -93,15 +110,16 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1092809967183950}
-  m_LocalRotation: {x: -0, y: 0.9485441, z: -0, w: -0.31664512}
-  m_LocalPosition: {x: 0.222, y: 0.752, z: 1.1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: -2.418, y: 4.303, z: 5.221948}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4204809753545136}
   - {fileID: 4655146008662104}
+  - {fileID: 4669855947575888}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 216.92, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!4 &4655146008662104
 Transform:
   m_ObjectHideFlags: 1
@@ -115,21 +133,60 @@ Transform:
   m_Father: {fileID: 4489199309856820}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &54668647197069216
-Rigidbody:
+--- !u!4 &4669855947575888
+Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1092809967183950}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
+  m_GameObject: {fileID: 1599428780386904}
+  m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
+  m_LocalPosition: {x: -0.009, y: 1.738, z: -0.396}
+  m_LocalScale: {x: 0.04000003, y: 0.2000002, z: 0.040000074}
+  m_Children: []
+  m_Father: {fileID: 4489199309856820}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+--- !u!23 &23456590977420286
+MeshRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1599428780386904}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 6945d26027cacbd4bbf14255a1008c97, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!33 &33387049057322202
+MeshFilter:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1599428780386904}
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!65 &65052656406968200
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -360,17 +417,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sensitivityArea:
     serializedVersion: 2
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: -4
+    y: -5.5
+    width: 10.5
+    height: 8
   sensitivityDistance: 7
   turnSpeed: 0.5
-  moveSpeed: 0.5
-  sleepTime: 7
+  moveSpeed: 0.6
+  sleepTime: 10
   wakeUpSound: {fileID: 8300000, guid: 158125c3eef3bab4f816a6c5aaa74c7e, type: 3}
   hitWeight: 0.8
-  hitRadius: 1.2
+  hitRadius: 1.05
+  _healthBar: {fileID: 4669855947575888}
+  _zone: {fileID: 0}
 --- !u!114 &114183978589221080
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -424,6 +483,19 @@ MonoBehaviour:
   m_SnapThreshold: 5
   m_InterpolateRotation: 1
   m_InterpolateMovement: 1
+--- !u!136 &136320626557389474
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1599428780386904}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!137 &137235386801434654
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

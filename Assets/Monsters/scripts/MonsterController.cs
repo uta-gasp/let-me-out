@@ -7,7 +7,6 @@ public class MonsterController : NetworkBehaviour
 {
     // visible in editor
 
-    public Rect sensitivityArea;
     public float sensitivityDistance = 7f;
     public float turnSpeed = 0.5f;
     public float moveSpeed = 0.5f;
@@ -18,10 +17,18 @@ public class MonsterController : NetworkBehaviour
     public float hitWeight = 1f;
     public float hitRadius = 0.4f;
 
+    [SerializeField] Transform _healthBar;
+    [SerializeField] MeshRenderer _zone;    // another way to set the area... sensitivityArea should then be removed
+
     // internal
 
+    const float HEALTH_BAR_SIZE_Y = 0.2f;
+    const float HEALTH_BAR_SIZE_XZ = 0.07f;
     const float HEALTH_DECREASE_PER_SECOND = 0.2f;   // health decrease per second
-    const float FREEZE_TIME = 10;       // seconds
+    const float FREEZE_TIME = 10;                   // seconds
+    const float TRANSFORM_THRESHOLD = 0.05f;
+    const float PAUSE_BEFORE_MOVING_HOME = 8f;
+    const float PAUSE_BEFORE_MOVING_HOME_AFTER_FROZEN = 1f;
 
     DebugDesk _debug;           // external
     Animator _animator;         // internal
@@ -38,6 +45,12 @@ public class MonsterController : NetworkBehaviour
 
     float _lostPlayerTime = 0;
     Transform _lastPlayerHit = null;
+    Rect _sensitivityArea;
+    Vector3 _homePoint;
+    Quaternion _homeRotation;
+
+    bool _isMovingHome = false;
+    bool _isRotatingHome = false;
 
     // overrides
 
@@ -54,6 +67,14 @@ public class MonsterController : NetworkBehaviour
         _animator = GetComponent<Animator>();
         _audio = GetComponent<AudioSource>();
         _gameFlow = FindObjectOfType<GameFlow>();
+
+        _healthBar.gameObject.SetActive(false);
+
+        Bounds bounds = _zone.bounds;
+        _sensitivityArea = new Rect(bounds.min.x, bounds.min.z, bounds.size.x, bounds.size.z);
+
+        _homePoint = transform.position;
+        _homeRotation = transform.rotation;
     }
 
     void Update()
@@ -73,6 +94,7 @@ public class MonsterController : NetworkBehaviour
         if (!_isMonster && nearbyPlayer)
         {
             _log.add("wakeup");
+
             WakeUp();
         }
         else if (_isMonster && !nearbyPlayer)
@@ -111,12 +133,36 @@ public class MonsterController : NetworkBehaviour
                 _gameFlow.HitPlayer(nearbyPlayer, hitWeight);
             }
         }
+        else if (_isMovingHome)
+        {
+            Vector3 currentPos = transform.position;
+
+            transform.LookAt(Vector3.Slerp(_homePoint, transform.position + transform.forward, 1f - Time.deltaTime * turnSpeed));
+            transform.position = Vector3.MoveTowards(transform.position, _homePoint, Time.deltaTime * moveSpeed);
+
+            if (Vector3.Distance(_homePoint, transform.position) < TRANSFORM_THRESHOLD)
+            {
+                _isMovingHome = false;
+                _isRotatingHome = true;
+            }
+        }
+        else if (_isRotatingHome)
+        {
+            Quaternion currentRot = transform.rotation;
+            transform.rotation = Quaternion.Slerp(_homeRotation, transform.rotation, 1f - Time.deltaTime * turnSpeed);
+
+            if (Mathf.Abs(Quaternion.Angle(_homeRotation, transform.rotation)) < TRANSFORM_THRESHOLD)
+            {
+                _isRotatingHome = false;
+            }
+        }
 
         _lastPlayerHit = isTouchingPlayer ? nearbyPlayer : null;
     }
 
     // public methods
 
+    [Server]
     public void Spot(string aPlayerName, bool aContinious)
     {
         if (!_isMonster || _health == 0f)
@@ -141,19 +187,27 @@ public class MonsterController : NetworkBehaviour
         }
     }
 
+    [Server]
     public void StopSpotting(string aPlayerName)
     {
-        _log.add($"{aPlayerName}\tgaze-off");
+        if (_isMonster)
+        {
+            _log.add($"{aPlayerName}\tgaze-off");
+        }
     }
 
     // internal methods
 
+    [Server]
     void Unfreeze()
     {
         _log.add("alive");
         _health = 1f;
+
+        Invoke("GoHome", PAUSE_BEFORE_MOVING_HOME_AFTER_FROZEN);
     }
 
+    [Server]
     Transform GetPlayerToMoveTo(Transform[] aPlayers, ref bool aIsTouching)
     {
         Vector2 monsterPositionOnTheFloor = new Vector2(transform.position.x, transform.position.z);
@@ -166,7 +220,7 @@ public class MonsterController : NetworkBehaviour
             Vector2 playerPositionOnTheFloor = new Vector2(player.position.x, player.position.z);
             distToPlayer = (playerPositionOnTheFloor - monsterPositionOnTheFloor).magnitude;
 
-            bool isSensiningPlayer = sensitivityArea.Contains(playerPositionOnTheFloor) && distToPlayer < sensitivityDistance;
+            bool isSensiningPlayer = _sensitivityArea.Contains(playerPositionOnTheFloor) && distToPlayer < sensitivityDistance;
             if (isSensiningPlayer)
             {
                 nearbyPlayer = player;
@@ -178,20 +232,34 @@ public class MonsterController : NetworkBehaviour
         return nearbyPlayer;
     }
 
+    [Server]
     void WakeUp()
     {
         _isMonster = true;
         _lostPlayerTime = 0;
 
+        _isMovingHome = false;
+        _isRotatingHome = false;
+        CancelInvoke("GoHome");
+
         RpcSetIsCloseToPlayer(true);
     }
 
+    [Server]
     void Snooze()
     {
         _isMonster = false;
         _lostPlayerTime = 0;
 
         RpcSetIsCloseToPlayer(false);
+
+        Invoke("GoHome", PAUSE_BEFORE_MOVING_HOME);
+    }
+
+    [Server]
+    void GoHome()
+    {
+        _isMovingHome = true;
     }
 
     [ClientRpc]
@@ -206,6 +274,7 @@ public class MonsterController : NetworkBehaviour
         }
 
         _animator.SetBool("IsCloseToPlayer", aIsCloseToPlayer);
+        _healthBar.gameObject.SetActive(aIsCloseToPlayer);
 
         if (aIsCloseToPlayer)
         {
@@ -222,14 +291,12 @@ public class MonsterController : NetworkBehaviour
         }
     }
 
+    // client-side
     void onChangeHealth(float aValue)
     {
-        /*
         if (!isClient)
             return;
 
-        if (_log != null)
-            _log.add($"health {_health}");
-        */
+        _healthBar.localScale = new Vector3(HEALTH_BAR_SIZE_XZ, HEALTH_BAR_SIZE_Y * aValue, HEALTH_BAR_SIZE_XZ);
     }
 }

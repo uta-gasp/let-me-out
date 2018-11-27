@@ -32,18 +32,19 @@ public class LightBeam : NetworkBehaviour
         if (hit.collider != null)
         {
             MonsterController monster = hit.collider.GetComponent<MonsterController>();
+            bool isSameMonster = _lastMonsterHit == monster;
+
+            if (!isSameMonster && _lastMonsterHit)
+            {
+                _lastMonsterHit.StopSpotting(_avatarName);
+            }
+
             if (monster)
             {
-                monster.Spot(_avatarName, _lastMonsterHit == monster);
-                _lastMonsterHit = monster;
+                monster.Spot(_avatarName, isSameMonster);
             }
-            else
-            {
-                if (_lastMonsterHit)
-                    _lastMonsterHit.StopSpotting(_avatarName);
 
-                _lastMonsterHit = null;
-            }
+            _lastMonsterHit = monster;
         }
     }
 }

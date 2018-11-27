@@ -6,6 +6,6 @@ public class OpenedDoor : MonoBehaviour
 
     void Start()
     {
-        GetComponent<Animator>().SetBool("open", true);
+        GetComponent<Door>().Open();
     }
 }

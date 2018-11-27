@@ -33,29 +33,6 @@ public class GameFlow : NetworkBehaviour
 
     // overrides
 
-    public override void OnStartClient()
-    {
-        _sounds = GetComponent<Sounds>();
-
-        foreach (var obj in vrObjects)
-        {
-            obj.SetActive(true);
-        }
-
-        //var networkHUD = FindObjectOfType<NetworkManagerHUD>();
-        //setup.settings["IP"] = networkHUD.manager.networkAddress;
-        
-        base.OnStartClient();
-    }
-
-    public override void OnStartServer()
-    {
-        setup.gameObject.SetActive(false);
-        Application.logMessageReceived += HandleLog;
-
-        base.OnStartServer();
-    }
-
     void Awake()
     {
         _debug = FindObjectOfType<DebugDesk>();
@@ -76,6 +53,26 @@ public class GameFlow : NetworkBehaviour
         {
             light.enabled = false;
         }
+    }
+
+    public override void OnStartClient()
+    {
+        _sounds = GetComponent<Sounds>();
+
+        foreach (var obj in vrObjects)
+        {
+            obj.SetActive(true);
+        }
+
+        base.OnStartClient();
+    }
+
+    public override void OnStartServer()
+    {
+        setup.gameObject.SetActive(false);
+        Application.logMessageReceived += HandleLog;
+
+        base.OnStartServer();
     }
 
     void Update()
@@ -156,6 +153,9 @@ public class GameFlow : NetworkBehaviour
         if (!isServer)
             return;
 
+        if (_logGeneral != null)
+            _logGeneral.add("finished");
+
         RpcLightsOn();
         RpcEndGame();
     }
@@ -166,10 +166,12 @@ public class GameFlow : NetworkBehaviour
         message.show("Completed!");
     }
 
-    void OpenDoor(GameObject aDoor)
+    void OpenDoor(Door aDoor)
     {
-        aDoor.GetComponent<BoxCollider>().enabled = false;
-        aDoor.GetComponent<Animator>().SetBool("open", true);
+        aDoor.Open();
+
+        if (_logGeneral != null)
+            _logGeneral.add($"open-door\t{aDoor.name}");
     }
 
     void UpdateKeyStatus(string aName)
@@ -202,10 +204,7 @@ public class GameFlow : NetworkBehaviour
     [ClientRpc]
     void RpcOpenDoor(string aName)
     {
-        if (_logGeneral != null)
-            _logGeneral.add($"open-door\t{aName}");
-
-        GameObject door = FindObjectsOfType<GameObject>().Single(obj => obj.tag == "door" && obj.name == aName);
+        Door door = FindObjectsOfType<Door>().Single(obj => obj.tag == "door" && obj.name == aName);
         OpenDoor(door);
     }
 
@@ -232,7 +231,7 @@ public class GameFlow : NetworkBehaviour
     void RpcEndGame()
     {
         if (_logGeneral != null)
-            _logGeneral.add($"finished");
+            _logGeneral.add("finished");
 
         Invoke("ShowCompleteMessage", 2);
         Invoke("Exit", 4);
