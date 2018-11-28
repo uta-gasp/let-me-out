@@ -26,7 +26,7 @@ public class GameFlow : NetworkBehaviour
 
     DebugDesk _debug;               // external
     Sounds _sounds = null;          // internal
-    Logger.LogDomain _logGeneral;
+    Logger.LogDomain _log;
     Logger.LogDomain _logErrors;
 
     bool _isFinished = false;
@@ -40,7 +40,7 @@ public class GameFlow : NetworkBehaviour
         Logger logger = FindObjectOfType<Logger>();
         if (logger)
         {
-            _logGeneral = logger.register("game");
+            _log = logger.register("game");
             _logErrors = logger.register("error");
         }
 
@@ -112,10 +112,13 @@ public class GameFlow : NetworkBehaviour
     // public methods
 
     // server-side
-    public void CaptureKey(Key aKey)
+    public void CaptureKey(Key aKey, string aPlayerName)
     {
         string keyName = aKey.name;
         string doorName = aKey.door.name;
+
+        if (_log != null)
+            _log.add("open-door", doorName, aPlayerName);
 
         // on a server
         OpenDoor(aKey.door);
@@ -153,8 +156,8 @@ public class GameFlow : NetworkBehaviour
         if (!isServer)
             return;
 
-        if (_logGeneral != null)
-            _logGeneral.add("finished");
+        if (_log != null)
+            _log.add("finished");
 
         RpcLightsOn();
         RpcEndGame();
@@ -169,9 +172,6 @@ public class GameFlow : NetworkBehaviour
     void OpenDoor(Door aDoor)
     {
         aDoor.Open();
-
-        if (_logGeneral != null)
-            _logGeneral.add($"open-door\t{aDoor.name}");
     }
 
     void UpdateKeyStatus(string aName)
@@ -188,8 +188,8 @@ public class GameFlow : NetworkBehaviour
     {
         if (type == LogType.Error || type == LogType.Exception)
         {
-            //if (_logErrors != null)
-            //    _logErrors.add(logString);
+            if (_logErrors != null)
+                _logErrors.add(logString);
             _debug.print($"ERROR: {logString} [{stackTrace}]");
         }
     }
@@ -217,8 +217,8 @@ public class GameFlow : NetworkBehaviour
     [ClientRpc]
     void RpcLightsOn()
     {
-        if (_logGeneral != null)
-            _logGeneral.add("lights-on");
+        if (_log != null)
+            _log.add("lights-on");
 
         foreach (Light light in winLights)
         {
@@ -230,8 +230,8 @@ public class GameFlow : NetworkBehaviour
     [ClientRpc]
     void RpcEndGame()
     {
-        if (_logGeneral != null)
-            _logGeneral.add("finished");
+        if (_log != null)
+            _log.add("finished");
 
         Invoke("ShowCompleteMessage", 2);
         Invoke("Exit", 4);

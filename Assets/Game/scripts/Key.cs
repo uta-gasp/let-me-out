@@ -36,11 +36,11 @@ public class Key : NetworkBehaviour
         if (other.tag != PLAYER_TAG)
             return;
 
-        Player avatar = other.GetComponent<Player>();
+        Player player = other.GetComponent<Player>();
 
-        if (FindObjectsOfType<Player>().Length == 1 || avatar.avatarName == player)
+        if (FindObjectsOfType<Player>().Length == 1 || player.avatarName == this.player)
         {
-            _game.CaptureKey(this);
+            _game.CaptureKey(this, player.avatarName);
 
             Destroy(gameObject);
         }

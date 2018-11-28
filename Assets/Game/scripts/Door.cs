@@ -4,10 +4,25 @@ public class Door : MonoBehaviour
 {
     public bool isOpenedInitially = false;
 
+    Logger.LogDomain _log;
+
     void Start()
     {
         if (isOpenedInitially)
             Open();
+
+        foreach (Transition tr in GetComponentsInChildren<Transition>())
+        {
+            tr.Collided += OnTransitionCollided;
+        }
+
+        Logger logger = FindObjectOfType<Logger>();
+        _log = logger.register("door", name.ToString());
+    }
+
+    private void OnTransitionCollided(object aSender, Transition.CollidedEventArgs aArgs)
+    {
+        _log.add("collider", aArgs.room);
     }
 
     public void Open()
