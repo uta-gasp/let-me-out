@@ -18,7 +18,7 @@ public class LightBeam : NetworkBehaviour
         _debug = FindObjectOfType<DebugDesk>();
 
         _light = GetComponentInChildren<Light>();
-        _avatarName = GetComponent<PlayerAvatar>().avatarName;
+        _avatarName = GetComponent<Player>().avatarName;
     }
 
     void Update()

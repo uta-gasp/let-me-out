@@ -18,7 +18,7 @@ public class Door : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        PlayerAvatar player = other.GetComponent<PlayerAvatar>();
+        Player player = other.GetComponent<Player>();
         if (player)
         {
             player.hitsDoor(name);

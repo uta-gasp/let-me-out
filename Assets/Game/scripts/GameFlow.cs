@@ -133,7 +133,7 @@ public class GameFlow : NetworkBehaviour
         if (_isFinished)
             return;
 
-        PlayerAvatar player = aPlayer.gameObject.GetComponent<PlayerAvatar>();
+        Player player = aPlayer.gameObject.GetComponent<Player>();
         if (!player.isAlive)
             return;
         

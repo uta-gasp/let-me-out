@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityStandardAssets.Characters.FirstPerson;
 
-public class PlayerAvatar : NetworkBehaviour
+public class Player : NetworkBehaviour
 {
     // visible in editor
 
@@ -74,10 +74,10 @@ public class PlayerAvatar : NetworkBehaviour
             _log.add($"hits-door\t{aName}");
     }
 
-    public static PlayerAvatar getLocalPlayer()
+    public static Player getLocalPlayer()
     {
-        var players = FindObjectsOfType<PlayerAvatar>();
-        return players.Count() > 0 ? FindObjectsOfType<PlayerAvatar>().Single(player => player.isLocalPlayer) : null;
+        var players = FindObjectsOfType<Player>();
+        return players.Count() > 0 ? FindObjectsOfType<Player>().Single(player => player.isLocalPlayer) : null;
     }
 
     // overrides

@@ -92,7 +92,7 @@ public class MonsterController : NetworkBehaviour
         if (!isServer || _gameFlow.isFinished || _health == 0f)
             return;
 
-        Transform[] players = FindObjectsOfType<PlayerAvatar>().
+        Transform[] players = FindObjectsOfType<Player>().
             Where(player => player.isAlive).
             Select(obj => obj.transform).
             ToArray();
@@ -122,7 +122,7 @@ public class MonsterController : NetworkBehaviour
 
         if (_log != null && _lastPlayerHit && (!isTouchingPlayer || _lastPlayerHit != nearbyPlayer))
         {
-            string playerName = _lastPlayerHit.GetComponent<PlayerAvatar>().avatarName;
+            string playerName = _lastPlayerHit.GetComponent<Player>().avatarName;
             _log.add($"{playerName}\tlost");
         }
 
@@ -136,7 +136,7 @@ public class MonsterController : NetworkBehaviour
             {
                 if (_log != null && _lastPlayerHit != nearbyPlayer)
                 {
-                    string playerName = nearbyPlayer.GetComponent<PlayerAvatar>().avatarName;
+                    string playerName = nearbyPlayer.GetComponent<Player>().avatarName;
                     _log.add($"{playerName}\thit");
                 }
 

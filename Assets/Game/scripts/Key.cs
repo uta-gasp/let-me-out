@@ -36,9 +36,9 @@ public class Key : NetworkBehaviour
         if (other.tag != PLAYER_TAG)
             return;
 
-        PlayerAvatar avatar = other.GetComponent<PlayerAvatar>();
+        Player avatar = other.GetComponent<Player>();
 
-        if (FindObjectsOfType<PlayerAvatar>().Length == 1 || avatar.avatarName == player)
+        if (FindObjectsOfType<Player>().Length == 1 || avatar.avatarName == player)
         {
             _game.CaptureKey(this);
 
