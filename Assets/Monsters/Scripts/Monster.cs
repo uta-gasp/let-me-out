@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 [RequireComponent(typeof(AudioSource))]
-public class MonsterController : NetworkBehaviour
+public class Monster : NetworkBehaviour
 {
     // visible in editor
 
@@ -22,6 +22,8 @@ public class MonsterController : NetworkBehaviour
     [SerializeField] MeshRenderer _zone;    // another way to set the area... sensitivityArea should then be removed
     [SerializeField] SkinnedMeshRenderer _mainMesh;
 
+    public bool isActive { get { return _isMonster && _health > 0; } }
+
     // internal
 
     const float HEALTH_BAR_SIZE_Y = 0.2f;
@@ -31,7 +33,9 @@ public class MonsterController : NetworkBehaviour
     const float TRANSFORM_THRESHOLD = 0.05f;
     const float PAUSE_BEFORE_MOVING_HOME = 8f;
     const float PAUSE_BEFORE_MOVING_HOME_AFTER_FROZEN = 1f;
-    const float FLASH_WEIGHT = 0.25f;
+    const float FLASH_COLOR_R = 0.4f;
+    const float FLASH_COLOR_G = 0.2f;
+    const float FLASH_COLOR_B = 0.2f;
     const float FLASH_DELTA = 0.05f;
 
     DebugDesk _debug;           // external
@@ -48,7 +52,6 @@ public class MonsterController : NetworkBehaviour
     float _health = 1f;
 
     float _lostPlayerTime = 0;
-    Transform _lastPlayerHit = null;
     Rect _sensitivityArea;
     Vector3 _homePoint;
     Quaternion _homeRotation;
@@ -67,10 +70,7 @@ public class MonsterController : NetworkBehaviour
         _debug = FindObjectOfType<DebugDesk>();
 
         Logger logger = FindObjectOfType<Logger>();
-        if (logger)
-        {
-            _log = logger.register($"monster\t{name}");
-        }
+        _log = logger.register("monster", name);
 
         _animator = GetComponent<Animator>();
         _audio = GetComponent<AudioSource>();
@@ -103,8 +103,6 @@ public class MonsterController : NetworkBehaviour
 
         if (!_isMonster && nearbyPlayer)
         {
-            _log.add("wakeup");
-
             WakeUp();
         }
         else if (_isMonster && !nearbyPlayer)
@@ -120,12 +118,6 @@ public class MonsterController : NetworkBehaviour
             }
         }
 
-        if (_log != null && _lastPlayerHit && (!isTouchingPlayer || _lastPlayerHit != nearbyPlayer))
-        {
-            string playerName = _lastPlayerHit.GetComponent<Player>().avatarName;
-            _log.add($"{playerName}\tlost");
-        }
-
         if (_isMonster && nearbyPlayer)
         {
             Vector3 playerAnchor = new Vector3(nearbyPlayer.position.x, transform.position.y, nearbyPlayer.position.z);
@@ -134,11 +126,8 @@ public class MonsterController : NetworkBehaviour
 
             if (isTouchingPlayer)
             {
-                if (_log != null && _lastPlayerHit != nearbyPlayer)
-                {
-                    string playerName = nearbyPlayer.GetComponent<Player>().avatarName;
-                    _log.add($"{playerName}\thit");
-                }
+                string playerName = nearbyPlayer.GetComponent<Player>().avatarName;
+                _log.add("hit", playerName);
 
                 _gameFlow.HitPlayer(nearbyPlayer, hitWeight);
             }
@@ -166,21 +155,16 @@ public class MonsterController : NetworkBehaviour
                 _isRotatingHome = false;
             }
         }
-
-        _lastPlayerHit = isTouchingPlayer ? nearbyPlayer : null;
     }
 
     // public methods
 
     [Server]
-    public void Spot(string aPlayerName, bool aContinious)
+    public void Spot(string aPlayerName, bool aFirstEntry)
     {
-        if (!_isMonster || _health == 0f)
-            return;
-
-        if (!aContinious)
+        if (aFirstEntry)
         {
-            _log.add($"{aPlayerName}\tgaze-on");
+            _log.add("gaze-on", aPlayerName);
         }
 
         _health = Mathf.Max(0f, _health - HEALTH_DECREASE_PER_SECOND * Time.deltaTime);
@@ -200,10 +184,7 @@ public class MonsterController : NetworkBehaviour
     [Server]
     public void StopSpotting(string aPlayerName)
     {
-        if (_isMonster)
-        {
-            _log.add($"{aPlayerName}\tgaze-off");
-        }
+        _log.add("gaze-off", aPlayerName);
 
         if (_isFlashing)
         {
@@ -264,6 +245,8 @@ public class MonsterController : NetworkBehaviour
     [Server]
     void WakeUp()
     {
+        _log.add("wakeup");
+
         _isMonster = true;
         _lostPlayerTime = 0;
 
@@ -294,14 +277,6 @@ public class MonsterController : NetworkBehaviour
     [ClientRpc]
     void RpcSetIsCloseToPlayer(bool aIsCloseToPlayer)
     {
-        if (_log != null)
-        {
-            if (_health == .0f)
-                _log.add("frozen");
-            else
-                _log.add(aIsCloseToPlayer ? "wakeup" : "snooze");
-        }
-
         _animator.SetTrigger(aIsCloseToPlayer ? "WakeUp" : "Snooze");
         _healthBar.gameObject.SetActive(aIsCloseToPlayer);
 
@@ -350,7 +325,7 @@ public class MonsterController : NetworkBehaviour
         }
 
         _mainMesh.material.SetColor("_EmissionColor", new Color(
-            _flashState * FLASH_WEIGHT, _flashState * FLASH_WEIGHT, _flashState * FLASH_WEIGHT, 1f));
+            _flashState * FLASH_COLOR_R, _flashState * FLASH_COLOR_G, _flashState * FLASH_COLOR_B, 1f));
 
         if (_flashState > 0f || _isFlashing)
         {

@@ -188,8 +188,8 @@ public class GameFlow : NetworkBehaviour
     {
         if (type == LogType.Error || type == LogType.Exception)
         {
-            if (_logErrors != null)
-                _logErrors.add(logString);
+            //if (_logErrors != null)
+            //    _logErrors.add(logString);
             _debug.print($"ERROR: {logString} [{stackTrace}]");
         }
     }

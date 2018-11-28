@@ -8,7 +8,7 @@ public class LightBeam : NetworkBehaviour
     DebugDesk _debug;       // external
     Light _light;           // child-internal
 
-    MonsterController _lastMonsterHit = null;
+    Monster _lastMonsterHit = null;
     string _avatarName;
 
     // overrides
@@ -31,7 +31,12 @@ public class LightBeam : NetworkBehaviour
 
         if (hit.collider != null)
         {
-            MonsterController monster = hit.collider.GetComponent<MonsterController>();
+            Monster monster = hit.collider.GetComponent<Monster>();
+            if (monster && !monster.isActive)
+            {
+                monster = null;
+            }
+
             bool isSameMonster = _lastMonsterHit == monster;
 
             if (!isSameMonster && _lastMonsterHit)
@@ -41,7 +46,7 @@ public class LightBeam : NetworkBehaviour
 
             if (monster)
             {
-                monster.Spot(_avatarName, isSameMonster);
+                monster.Spot(_avatarName, !isSameMonster);
             }
 
             _lastMonsterHit = monster;

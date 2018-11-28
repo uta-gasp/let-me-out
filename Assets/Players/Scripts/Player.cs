@@ -51,14 +51,15 @@ public class Player : NetworkBehaviour
         _statusUI.flash();
 
         _health = Mathf.Max(0f, _health - aAmount);
+        _log.add("health", _health.ToString());
+
         return _health;
     }
 
     // server-side
     public void respawn()
     {
-        if (_log != null)
-            _log.add("respawned");
+        _log.add("respawned");
 
         Invoke("RestoreProps", 1.5f);
 
@@ -70,8 +71,7 @@ public class Player : NetworkBehaviour
         if (!isServer)
             return;
 
-        if (_log != null)
-            _log.add($"hits-door\t{aName}");
+        _log.add("hits-door", aName);
     }
 
     public static Player getLocalPlayer()
@@ -151,14 +151,10 @@ public class Player : NetworkBehaviour
 
         if (!_isWalking && _fpc.isWalking)
         {
-            if (_log != null)
-                _log.add("move");
             //_animator.SetBool("isWalking", true);
         }
         else if (_isWalking && !_fpc.isWalking)
         {
-            if (_log != null)
-                _log.add("stop");
             //_animator.SetBool("isWalking", false);
         }
 
@@ -172,8 +168,7 @@ public class Player : NetworkBehaviour
         _name = $"player-{aIndex}";
 
         Logger logger = FindObjectOfType<Logger>();
-        if (logger)
-            _log = logger.register($"player\t{aIndex}");
+        _log = logger.register("player", aIndex.ToString());
 
         _avatar = Instantiate(avatars[aIndex]);
         _avatar.transform.parent = transform;
@@ -188,9 +183,6 @@ public class Player : NetworkBehaviour
     {
         if (!isLocalPlayer)
             return;
-
-        if (_log != null)
-            _log.add("dead");
 
         _fpc.enabled = false;
         _light.enabled = false;
@@ -240,6 +232,7 @@ public class Player : NetworkBehaviour
     void RestoreProps()
     {
         _health = 1f;
+        _log.add("health", _health.ToString());
     }
 
     // callbacks

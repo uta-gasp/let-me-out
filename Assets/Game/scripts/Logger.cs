@@ -21,11 +21,16 @@ public class Logger : MonoBehaviour
             enabled = aEnabled;
         }
 
-        public void add(string aText)
+        public void add(string aText, params string[] aArgs)
         {
             if (enabled)
             {
-                Added(this, $"{Time.time}\t{_header}\t{aText}");
+                List<string> fields = new List<string>();
+                fields.Add(Time.time.ToString());
+                fields.Add(_header);
+                fields.Add(aText);
+                fields.AddRange(aArgs);
+                Added(this, string.Join("\t", fields));
             }
         }
     }
@@ -36,20 +41,22 @@ public class Logger : MonoBehaviour
     private List<string> _buffer = new List<string>();
     private Dictionary<string, LogDomain> _domains = new Dictionary<string, LogDomain>();
 
-    public LogDomain register(string aName, bool aEnabled = true)
+    public LogDomain register(string aName, string aID = null, bool aEnabled = true)
     {
+        string name = string.IsNullOrEmpty(aID) ? aName : $"{aName}\t{aID}";
+
         LogDomain result;
-        if (!_domains.ContainsKey(aName))
+        if (!_domains.ContainsKey(name))
         {
-            result = new LogDomain(aName, aEnabled);
+            result = new LogDomain(name, aEnabled);
             result.Added += onRecordAdded;
             result.add("init");
 
-            _domains.Add(aName, result);
+            _domains.Add(name, result);
         }
         else
         {
-            result = _domains[aName];
+            result = _domains[name];
         }
 
         return result;
