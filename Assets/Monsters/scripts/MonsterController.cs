@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -19,6 +20,7 @@ public class MonsterController : NetworkBehaviour
 
     [SerializeField] Transform _healthBar;
     [SerializeField] MeshRenderer _zone;    // another way to set the area... sensitivityArea should then be removed
+    [SerializeField] SkinnedMeshRenderer _mainMesh;
 
     // internal
 
@@ -29,6 +31,8 @@ public class MonsterController : NetworkBehaviour
     const float TRANSFORM_THRESHOLD = 0.05f;
     const float PAUSE_BEFORE_MOVING_HOME = 8f;
     const float PAUSE_BEFORE_MOVING_HOME_AFTER_FROZEN = 1f;
+    const float FLASH_WEIGHT = 0.25f;
+    const float FLASH_DELTA = 0.05f;
 
     DebugDesk _debug;           // external
     Animator _animator;         // internal
@@ -51,6 +55,10 @@ public class MonsterController : NetworkBehaviour
 
     bool _isMovingHome = false;
     bool _isRotatingHome = false;
+
+    float _flashState = 0.0f;
+    float _flashDelta = FLASH_DELTA;
+    bool _isFlashing = false;
 
     // overrides
 
@@ -75,6 +83,8 @@ public class MonsterController : NetworkBehaviour
 
         _homePoint = transform.position;
         _homeRotation = transform.rotation;
+
+        _mainMesh.material.EnableKeyword("_EMISSION");
     }
 
     void Update()
@@ -177,13 +187,13 @@ public class MonsterController : NetworkBehaviour
 
         if (_health == 0f)
         {
-            _log.add("frozen");
-            Snooze();
-
-            if (isServer)
-            {
-                Invoke("Unfreeze", FREEZE_TIME);
-            }
+            Freeze();
+            Invoke("Unfreeze", FREEZE_TIME);
+        }
+        else if (!_isFlashing)
+        {
+            _isFlashing = true;
+            RpcFlashStart();
         }
     }
 
@@ -194,9 +204,28 @@ public class MonsterController : NetworkBehaviour
         {
             _log.add($"{aPlayerName}\tgaze-off");
         }
+
+        if (_isFlashing)
+        {
+            _isFlashing = false;
+            RpcFlashStop();
+        }
     }
 
     // internal methods
+
+    [Server]
+    void Freeze()
+    {
+        _log.add("frozen");
+        Snooze();
+
+        if (_isFlashing)
+        {
+            _isFlashing = false;
+            RpcFlashStop();
+        }
+    }
 
     [Server]
     void Unfreeze()
@@ -288,6 +317,44 @@ public class MonsterController : NetworkBehaviour
         else
         {
             _audio.Stop();
+        }
+    }
+
+    [ClientRpc]
+    void RpcFlashStart()
+    {
+        CancelInvoke("FlashUpdate");
+
+        _isFlashing = true;
+        _flashDelta = FLASH_DELTA;
+        Invoke("FlashUpdate", Time.deltaTime);
+    }
+
+    [ClientRpc]
+    void RpcFlashStop()
+    {
+        CancelInvoke("FlashUpdate");
+
+        _isFlashing = false;
+        _flashDelta = -FLASH_DELTA;
+        Invoke("FlashUpdate", Time.deltaTime);
+    }
+
+    // client-side
+    void FlashUpdate()
+    {
+        _flashState = Mathf.Max(0f, Mathf.Min(1.0f, _flashState + _flashDelta));
+        if (_flashState == 1.0f || (_flashState == 0.0f && _isFlashing))
+        {
+            _flashDelta = -_flashDelta;
+        }
+
+        _mainMesh.material.SetColor("_EmissionColor", new Color(
+            _flashState * FLASH_WEIGHT, _flashState * FLASH_WEIGHT, _flashState * FLASH_WEIGHT, 1f));
+
+        if (_flashState > 0f || _isFlashing)
+        {
+            Invoke("FlashUpdate", Time.deltaTime);
         }
     }
 

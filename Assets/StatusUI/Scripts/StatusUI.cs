@@ -8,10 +8,14 @@ public class StatusUI : MonoBehaviour
 
     public Message message { get { return _message; } }
 
+    // internal members
+
     const float FLASH_DELTA = 0.05f;
 
     float _flashState = 0.0f;
     float _flashDelta = FLASH_DELTA;
+
+    // public methods
 
     public void notify(string aNotification)
     {
@@ -31,6 +35,8 @@ public class StatusUI : MonoBehaviour
         Invoke("FlashUpdate", Time.deltaTime);
     }
 
+    // overrides
+
     void Start()
     {
         transform.gameObject.SetActive(false);
@@ -38,6 +44,8 @@ public class StatusUI : MonoBehaviour
 
         _flash.material.SetColor("_EmissionColor", new Color(0.3f * _flashState, 0.1f * _flashState, 0.1f * _flashState));
     }
+
+    // internal methods
 
     void Stick()
     {

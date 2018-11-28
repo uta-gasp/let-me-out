@@ -415,12 +415,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c61d4409791430044ae691558a4f514a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sensitivityArea:
-    serializedVersion: 2
-    x: -4
-    y: -5.5
-    width: 10.5
-    height: 8
   sensitivityDistance: 7
   turnSpeed: 0.5
   moveSpeed: 0.6
@@ -430,6 +424,7 @@ MonoBehaviour:
   hitRadius: 1.05
   _healthBar: {fileID: 4669855947575888}
   _zone: {fileID: 0}
+  _mainMesh: {fileID: 137235386801434654}
 --- !u!114 &114183978589221080
 MonoBehaviour:
   m_ObjectHideFlags: 1
