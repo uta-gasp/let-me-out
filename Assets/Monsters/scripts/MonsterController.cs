@@ -302,7 +302,7 @@ public class MonsterController : NetworkBehaviour
                 _log.add(aIsCloseToPlayer ? "wakeup" : "snooze");
         }
 
-        _animator.SetBool("IsCloseToPlayer", aIsCloseToPlayer);
+        _animator.SetTrigger(aIsCloseToPlayer ? "WakeUp" : "Snooze");
         _healthBar.gameObject.SetActive(aIsCloseToPlayer);
 
         if (aIsCloseToPlayer)
