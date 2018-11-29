@@ -41,7 +41,7 @@ public class Monster : NetworkBehaviour
     DebugDesk _debug;           // external
     Animator _animator;         // internal
     AudioSource _audio;         // internal
-    GameFlow _gameFlow;         // external
+    Game _gameFlow;         // external
     Logger.LogDomain _log = null;
 
     [SyncVar]
@@ -74,7 +74,7 @@ public class Monster : NetworkBehaviour
 
         _animator = GetComponent<Animator>();
         _audio = GetComponent<AudioSource>();
-        _gameFlow = FindObjectOfType<GameFlow>();
+        _gameFlow = FindObjectOfType<Game>();
 
         _healthBar.gameObject.SetActive(false);
 

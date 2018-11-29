@@ -4,7 +4,7 @@ using UnityEngine.Networking;
 using UnityStandardAssets.Characters.FirstPerson;
 using Valve.VR;
 
-public class GameFlow : NetworkBehaviour
+public class Game : NetworkBehaviour
 {
     // visible in editor
 
@@ -217,9 +217,6 @@ public class GameFlow : NetworkBehaviour
     [ClientRpc]
     void RpcLightsOn()
     {
-        if (_log != null)
-            _log.add("lights-on");
-
         foreach (Light light in winLights)
         {
             light.gameObject.SetActive(true);
@@ -230,9 +227,6 @@ public class GameFlow : NetworkBehaviour
     [ClientRpc]
     void RpcEndGame()
     {
-        if (_log != null)
-            _log.add("finished");
-
         Invoke("ShowCompleteMessage", 2);
         Invoke("Exit", 4);
     }

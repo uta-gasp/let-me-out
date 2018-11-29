@@ -22,7 +22,7 @@ public class Door : MonoBehaviour
 
     private void OnTransitionCollided(object aSender, Transition.CollidedEventArgs aArgs)
     {
-        _log.add("collider", aArgs.room);
+        _log.add("collided", aArgs.room, aArgs.player);
     }
 
     public void Open()

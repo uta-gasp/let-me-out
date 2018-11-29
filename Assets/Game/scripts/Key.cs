@@ -14,7 +14,7 @@ public class Key : NetworkBehaviour
     static string PLAYER_TAG = "player";
 
     DebugDesk _debug;       // external
-    GameFlow _game;         // external
+    Game _game;         // external
 
     // overrides
 
@@ -22,7 +22,7 @@ public class Key : NetworkBehaviour
     {
         _debug = FindObjectOfType<DebugDesk>();
 
-        _game = FindObjectOfType<GameFlow>();
+        _game = FindObjectOfType<Game>();
     }
 
     void Update()

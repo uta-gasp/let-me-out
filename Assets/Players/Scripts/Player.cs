@@ -51,7 +51,9 @@ public class Player : NetworkBehaviour
         _statusUI.flash();
 
         _health = Mathf.Max(0f, _health - aAmount);
-        _log.add("health", _health.ToString());
+
+        if (aAmount > 0)
+            _log.add("health", _health.ToString());
 
         return _health;
     }
@@ -101,6 +103,8 @@ public class Player : NetworkBehaviour
 
         CreateAvatar(index);
 
+        _fpc.enabled = isLocalPlayer;
+
         if (!isLocalPlayer)
             return;
 
@@ -108,7 +112,7 @@ public class Player : NetworkBehaviour
 
         _calibDisplay = FindObjectOfType<Calibration>();
         _calibDisplay.transform.parent = _camera;
-        _calibDisplay.transform.localPosition = new Vector3(-0.44f, offset, 0.5f);
+        _calibDisplay.transform.localPosition = new Vector3(-0.44f, -1.3f, 0.5f);
         _calibDisplay.transform.localRotation = Quaternion.Euler(0, 0, 0);
 
         _viveControllerLeft = GameObject.Find("Controller (left)")?.GetComponent<ViveController>();
@@ -128,7 +132,7 @@ public class Player : NetworkBehaviour
             _viveControllerRight.pinchToggled += OnVivePinchToggled;
         }
 
-        Setup setup = FindObjectOfType<GameFlow>().setup;
+        Setup setup = FindObjectOfType<Game>().setup;
         if (setup.mode == Setup.Mode.HeadGaze)
         {
             FindObjectOfType<Calibration>().hide();
@@ -170,10 +174,13 @@ public class Player : NetworkBehaviour
         Logger logger = FindObjectOfType<Logger>();
         _log = logger.register("player", aIndex.ToString());
 
-        _avatar = Instantiate(avatars[aIndex]);
-        _avatar.transform.parent = transform;
-        _avatar.transform.localPosition = new Vector3(0, offset, -0.3f);
-        _avatar.transform.localRotation = new Quaternion(0, 0, 0, 0);
+        if (!isLocalPlayer)
+        {
+            _avatar = Instantiate(avatars[aIndex]);
+            _avatar.transform.parent = transform;
+            _avatar.transform.localPosition = new Vector3(0, offset, 0);
+            _avatar.transform.localRotation = new Quaternion(0, 0, 0, 0);
+        }
 
         // _animator = _avatar.GetComponent<Animator>();
     }

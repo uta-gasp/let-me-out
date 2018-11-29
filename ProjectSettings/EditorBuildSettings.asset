@@ -6,5 +6,5 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/theHouse.unity
-    guid: 6ccda9e09255e3c4db99aa4ea099d3d6
+    path: Assets/letmeout.unity
+    guid: 2009b46da2b279f41a2db1a58715bc36
