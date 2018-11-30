@@ -6,9 +6,16 @@ public class KeyManager : MonoBehaviour
 {
     public Setup.Mode mode;
 
+    DebugDesk _debug;
+
     void Start()
     {
-        gameObject.SetActive( FindObjectOfType<Setup>().mode == mode );
+        _debug = FindObjectOfType<DebugDesk>();
     }
 
+    public void Activate(Setup.Mode aMode)
+    {
+        // _debug.print(aMode.ToString());
+        gameObject.SetActive(aMode == mode);
+    }
 }

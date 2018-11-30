@@ -57,6 +57,11 @@ public class Game : NetworkBehaviour
 
     public override void OnStartClient()
     {
+        foreach (var keySet in FindObjectsOfType<KeyManager>())
+        {
+            keySet.Activate(setup.mode);
+        }
+
         _sounds = GetComponent<Sounds>();
 
         foreach (var obj in vrObjects)
@@ -69,8 +74,14 @@ public class Game : NetworkBehaviour
 
     public override void OnStartServer()
     {
-        setup.gameObject.SetActive(false);
         Application.logMessageReceived += HandleLog;
+
+        foreach (var keySet in FindObjectsOfType<KeyManager>())
+        {
+            keySet.Activate(setup.mode);
+        }
+
+        setup.gameObject.SetActive(false);
 
         base.OnStartServer();
     }

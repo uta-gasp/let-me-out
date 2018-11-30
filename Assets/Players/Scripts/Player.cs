@@ -48,7 +48,7 @@ public class Player : NetworkBehaviour
     // server-side
     public float decreaseHealth(float aAmount)
     {
-        _statusUI.flash();
+        RpcFlash();
 
         _health = Mathf.Max(0f, _health - aAmount);
 
@@ -210,6 +210,13 @@ public class Player : NetworkBehaviour
             _statusUI.notify("Respawning the partner...");
             Invoke("ClearNotification", 3);
         }
+    }
+
+    [ClientRpc]
+    void RpcFlash()
+    {
+        if (isLocalPlayer)
+            _statusUI.flash();
     }
 
     // server-side
