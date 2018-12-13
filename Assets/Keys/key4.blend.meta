@@ -1,7 +1,5 @@
 fileFormatVersion: 2
 guid: 7b1d632b5199d024fb75e9e45269e451
-timeCreated: 1524142914
-licenseType: Free
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -13,7 +11,12 @@ ModelImporter:
     4300000: key1
     7400000: Default Take
     9500000: //RootNode
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: key_material
+    second: {fileID: 2100000, guid: 137d440e2a6d73a46847fcb96232f7f1, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -56,8 +59,6 @@ ModelImporter:
     optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
-    preserveHierarchy: 0
-    indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88

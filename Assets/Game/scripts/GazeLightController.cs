@@ -68,7 +68,6 @@ public class GazeLightController : NetworkBehaviour
 
     private void onCalibrationStatusChanged(object sender, bool e)
     {
-        Debug.Log($"is calibrating - {e}");
         gameObject.SetActive(!e);
     }
 
